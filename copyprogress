@@ -1,0 +1,22 @@
+#!/bin/bash
+
+destinationf="$2"
+source=$(du -sb "$1" | awk "{print \$1}")
+destination=$(du -sb "$2" | awk "{print \$1}")
+percent=0
+leftPercent=0
+completeString=""
+leftString=""
+
+while [ $destination -lt $source ]
+do
+	let percent=($destination * 100)/$source
+	completeString=$(printf '%*s' "$percent" ' ' | tr ' ' "=")
+        let leftPercent=100-$percent
+        leftString=$(printf '%*s' "$leftPercent" ' ' | tr ' ' " ") 
+	echo -ne " [${completeString}>${leftString}] ${percent}% (${destination} / ${source})\r"
+	destination=$(du -sb $destinationf | awk "{print \$1}")
+	sleep 2
+done
+
+exit 0
